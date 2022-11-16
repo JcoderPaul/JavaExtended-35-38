@@ -1,0 +1,241 @@
+******* Класс Field *******
+
+Класс Field позволяет:
+- получить значение поля, его тип, имя, а так же модификаторы поля;
+- получить список аннотаций, класс, в котором объявлено поле и другую информацию;
+- установить новое значение в поле, даже если оно объявлено как private;
+
+Начнем с примера, создадим класс Car:
+---------------------------------------------------------------------------------
+class Car {
+    private int horsepower;
+    public final String serialNumber;
+
+    public Car() {
+        serialNumber = "";
+    }
+
+    public Car(int horsepower, String serialNumber) {
+        this.horsepower = horsepower;
+        this.serialNumber = serialNumber;
+    }
+}
+---------------------------------------------------------------------------------
+
+******* Получение значения переменной *******
+
+Для того, чтобы получить значения из класса Field существуют методы:
+- *.getByte();
+- *.getShort();
+- *.getInt();
+- *.getLong();
+- *.getFloat();
+- *.getDouble();
+- *.getChar();
+- *.getBoolean();
+- *.get().
+
+Первые 8 методов существуют для получения примитивов, а последний для получения объектов.
+
+*** Пример 1 - Получение значения public переменной.
+---------------------------------------------------------------------------------
+Car car = new Car(500, "1233");
+Class<? extends Car> carClass = car.getClass();
+Field serialNumberField = carClass.getDeclaredField("serialNumber");
+
+// Указываем из какого объекта мы хотим получить значение
+String serialNumberValue = (String) serialNumberField.get(car);
+System.out.println(serialNumberValue);
+// На экране: 1233
+---------------------------------------------------------------------------------
+
+Метод *.get() принимает объект Сar, у которого мы и хотим получить значение поля.
+При вызове метода *.get() у serialNumber нам необходимо использовать кастомизацию,
+т.к. метод *.get() возвращает тип Object, но если мы знаем тип, то мы можем
+воспользоваться этим и преобразовать его к нужному нам типу.
+
+*** Пример 2 - Получение значения private переменной
+---------------------------------------------------------------------------------
+Car car = new Car(500, "1233");
+Class<? extends Car> carClass = car.getClass();
+Field horsepowerField = carClass.getDeclaredField("horsepower");
+
+int horsepowerValue = horsepowerField.getInt(car);
+System.out.println(horsepowerValue);
+
+
+!!! После запуска такого варианта кода, программа выкинет исключение !!!
+java.lang.IllegalAccessException: class com.lessons.reflection.Main
+cannot access a member of class com.lessons.reflection.Car with modifiers "private"
+---------------------------------------------------------------------------------
+
+Нам намекают, что нельзя получить значение приватной переменной. Для того, чтобы
+обойти это ограничение, перед вызовом метода *.getInt(), необходимо вызвать метод
+*.setAccessible(true). Правильный вариант кода см. ниже.
+---------------------------------------------------------------------------------
+Car car = new Car(500, "1233");
+Class<? extends Car> carClass = car.getClass();
+Field horsepowerField = carClass.getDeclaredField("horsepower");
+
+// Разрешаем доступ к private переменной
+horsepowerField.setAccessible(true);
+int horsepowerValue = horsepowerField.getInt(car);
+System.out.println(horsepowerValue);
+// На экране: 500
+---------------------------------------------------------------------------------
+
+*** Пример 3 - Получение имени, типа и модификаторов переменной
+---------------------------------------------------------------------------------
+Car car = new Car(500, "1233");
+Class<? extends Car> carClass = car.getClass();
+Field horsepowerField = carClass.getDeclaredField("horsepower");
+
+String name = horsepowerField.getName();
+System.out.println(name);
+// На экране: horsepower
+
+Class<?> type = horsepowerField.getType();
+System.out.println(type);
+// На экране: int
+
+int modifiers = horsepowerField.getModifiers();
+System.out.println(modifiers);
+// На экране: 2
+---------------------------------------------------------------------------------
+
+Если с первыми двумя методами все понятно, то с *.getModifiers() не все так гладко.
+Все дело в том, что метод *.getModifiers() возвращает все модификаторы метода в
+битовом представлении. Для работы с ним необходимо воспользоваться методами класса
+Modifier.
+---------------------------------------------------------------------------------
+Car car = new Car(500, "1233");
+Class<? extends Car> carClass = car.getClass();
+Field horsepowerField = carClass.getDeclaredField("horsepower");
+
+int modifiers = horsepowerField.getModifiers();
+
+System.out.println(Modifier.isPrivate(modifiers));
+// На экране: true
+System.out.println(Modifier.isFinal(modifiers));
+// На экране: false
+---------------------------------------------------------------------------------
+
+*** Пример 4 - Получение аннотаций переменной
+
+Для получения аннотаций переменной существуют методы:
+- *.getAnnotations();
+- *.getDeclaredAnnotations();
+- *.getAnnotationsByType();
+- *.getDeclaredAnnotationsByType();
+- *.getAnnotation();
+- *.getDeclaredAnnotation().
+
+Пары методов getAnnotations() и getDeclaredAnnotations(),
+                 getAnnotationsByType() и getDeclaredAnnotationsByType(),
+                 getAnnotation() и getDeclaredAnnotation() делают одно и то же.
+
+НО, предназначались эти методы для классов, т.к. только аннотации на классах
+наследуются. Чтобы влезть в существующую архитектуру JDK, разработчики решили
+просто реализовать один метод через другой, что и можно увидеть в классе
+AccessibleObject.
+
+Для примера нам нужно будет добавить аннотацию над полем horsepower:
+---------------------------------------------------------------------------------
+@Description("the power of an engine")
+private int horsepower;
+---------------------------------------------------------------------------------
+Реализация:
+---------------------------------------------------------------------------------
+Car car = new Car(500, "1233");
+Class<? extends Car> carClass = car.getClass();
+Field horsepowerField = carClass.getDeclaredField("horsepower");
+
+Annotation[] annotations = horsepowerField.getAnnotations();
+System.out.println(Arrays.toString(annotations));
+// На экране: [@jdk.jfr.Description(value="the power of an engine")]
+
+Description descriptionAnnotation = horsepower.getAnnotation(Description.class);
+System.out.println(descriptionAnnotation);
+// На экране: [@jdk.jfr.Description(value="the power of an engine")]
+
+Annotation[] annotationsByType = horsepower.getAnnotationsByType(Description.class);
+System.out.println(Arrays.toString(annotationsByType));
+// На экране: [@jdk.jfr.Description(value="the power of an engine")]
+---------------------------------------------------------------------------------
+
+- *.getAnnotations() - возвращает массив аннотаций метода;
+- *.getAnnotation() - возвращает аннотацию по типу;
+- *.getAnnotationsByType() - возвращает массив аннотаций по типу, метод был добавлен
+                             в Java 8 вместе с @Repeatable аннотациями
+
+******* Получение дополнительных данных ********
+
+- *.getDeclaringClass() - возвращает класс, в котором объявлено поле;
+- *.isEnumConstant() - возвращает true, если поле является значением перечисления;
+- *.isSynthetic() - возвращает true, если метод синтетический (генерируется JVM);
+- *.canAccess(car) - возвращает true, если к полю есть доступ (к примеру, оно не приватное);
+- *.isAnnotationPresent(Description.class) - возвращает true, если такая аннотация присутствует
+                                             на поле;
+- *.isAnnotationPresent(NamedArg.class);
+
+******* Изменение значения переменных *******
+
+Для изменения значения переменной в Reflection API существуют методы:
+- *.setByte();
+- *.setShort();
+- *.setInt();
+- *.setLong();
+- *.setFloat();
+- *.setDouble();
+- *.setChar();
+- *.setBoolean();
+- *.set() - принимает ссылочные типы данных.
+
+*** Пример 6 - Изменение значения public переменной
+---------------------------------------------------------------------------------
+Car car = new Car(500, "1233");
+Class<? extends Car> carClass = car.getClass();
+Field serialNumberField = carClass.getField("serialNumber");
+
+System.out.println("Before change:" + serialNumberField.get(car));
+serialNumberField.set(car, "37U1");
+System.out.println("After change:" + serialNumberField.get(car));
+
+При таком содержимом кода программа выкинет:
+Exception in thread "main" java.lang.IllegalAccessException:
+Can not set final java.lang.String field com.lessons.reflection.Car.serialNumber
+to java.lang.String
+---------------------------------------------------------------------------------
+
+Поскольку переменная serialNumber в классе Car является final. Переменные типа final
+не позволяют просто так изменить свое значение. Необходимо применить *.setAccessible(true).
+---------------------------------------------------------------------------------
+Car car = new Car(500, "1233");
+Class<? extends Car> carClass = car.getClass();
+Field serialNumberField = carClass.getField("serialNumber");
+
+System.out.println("Before change:" + serialNumberField.get(car));
+// На экране: Before change:1233
+serialNumberField.setAccessible(true);
+serialNumberField.set(car, "37U1");
+System.out.println("After change:" + serialNumberField.get(car));
+// На экране: After change:37U1
+---------------------------------------------------------------------------------
+
+*** Пример 7 - Изменение значения private переменной
+
+Как и в случае с получением значение private переменной или изменением final переменной,
+перед использованием одного из методов *.set() необходимо вызвать метод *.setAccessible(true)
+с аргументом true.
+---------------------------------------------------------------------------------
+Car car = new Car(500, "1233");
+Class<? extends Car> carClass = car.getClass();
+Field horsepowerField = carClass.getDeclaredField("horsepower");
+
+horsepowerField.setAccessible(true);
+System.out.println("Before change:" + horsepowerField.getInt(car));
+// На экране: Before change:500
+horsepowerField.setInt(car, 751);
+System.out.println("After change:" + horsepowerField.getInt(car));
+// На экране: After change:751
+---------------------------------------------------------------------------------

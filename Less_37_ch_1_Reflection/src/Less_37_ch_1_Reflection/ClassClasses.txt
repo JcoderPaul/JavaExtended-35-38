@@ -1,0 +1,198 @@
+******* Class классов *******
+
+В Java есть специальный класс с названием Class. Поэтому его и называют
+классом класса. С помощью него осуществляется работа с рефлексией, он и
+является входной точкой в методы рефлексии.
+
+Class есть у :
+- классов, интерфейсов, перечислений;
+- примитивов и обёрток над ними;
+- массивов;
+- void.
+
+******* Получение доступа к классу через Class *******
+
+- *** Способ 1 *** - Сlass.forName(“имя.пакета.ИмяКласса”)
+--------------------------------------------------------------------
+try {
+    Class<?> carClass = Class.forName("com.example.reflection.Car");
+} catch (ClassNotFoundException e) {
+    e.printStackTrace();
+}
+--------------------------------------------------------------------
+В данном случае мы знаем только относительный путь к классу, это самый
+ненадёжный способ, поэтому и тип дженерика Class<?>. Ведь тип будет
+известен только после того, как мы запустим программу, компилятор этого
+знать не может наперёд.
+
+Вызов метода *.forName() необходимо обернуть в блок try-catch т.к. метод
+может выбросить ClassNotFoundException, в случае если он не найдет класс
+с таким именем.
+
+- *** Способ 2 *** - метод *.getClass() у экземпляра класса
+--------------------------------------------------------------------
+Car car = new Car();
+Class<? extends Car> carClass = car.getClass();
+--------------------------------------------------------------------
+
+В этом случае мы получили Class класса прямиком из экземпляра класса.
+Такой способ надёжнее, но он является не самым оптимальным. В этом
+случае компилятор не знает, экземпляр этого класса перед нами или
+его наследник, поэтому подставляем тип Class<? extends Car>.
+
+Тут оборачивать метод getClass() в блок try-catch нет необходимости
+т.к. мы вызываем этот метод у существующего класса, который видит компилятор.
+Но, к сожалению, компилятор не может знать тип переменной до конца, поэтому мы
+и используем "? extends Car", как дженерик тип.
+
+- *** Способ 3 *** - ИмяКласса.class
+--------------------------------------------------------------------
+Class<Car> carClass = Car.class;
+--------------------------------------------------------------------
+
+В последнем случае мы прямо указываем из какого класса мы хотим получить Class.
+Тут нет возможности ошибиться в имени, нет возможности получить класс наследника
+класса Car, как это было возможно во втором случае. Компилятор точно знает, что
+это за тип класса. Этот способ является самым надёжным, поэтому и тип здесь
+Class<Car>.
+
+Здесь по той же причине не нужно использовать блок try-catch.
+
+Чем больше мы знаем о классе, тем точнее будет тип класса при получении Class класса.
+
+******* Получение информации о переменных класса (полях) с помощью методов Reflection *******
+
+Получить информацию о переменных класса можно с помощью методов:
+- *.getDeclaredFields();
+- *.getDeclaredField();
+- *.getFields();
+- *.getField().
+
+Пример 1 - *.getDeclaredFields() - метод возвращает все объявленные переменные в классе.
+----------------------------------------------------------------------------------------
+Class<Car> carClass = Car.class;
+Field[] declaredFields = carClass.getDeclaredFields();
+for (Field field :declaredFields) {
+    System.out.println(field);
+}
+----------------------------------------------------------------------------------------
+
+Пример 2 - *.getDeclaredField() - метод возвращает переменную по её имени. Если переменной
+                                  с таким именем нет, то метод выбросит NoSuchFieldException.
+----------------------------------------------------------------------------------------
+Class<Car> carClass = Car.class;
+try {
+    Field horsepowerField = carClass.getDeclaredField("horsepower");
+    System.out.println(horsepowerField);
+    Field blaBlaField = carClass.getDeclaredField("bla_bla");
+} catch (NoSuchFieldException e) {
+    e.printStackTrace();
+}
+----------------------------------------------------------------------------------------
+
+Пример 3 - *.getFields() - метод getFields() возвращает список только public переменных
+----------------------------------------------------------------------------------------
+Class<Car> carClass = Car.class;
+Field[] fields = carClass.getFields();
+for (Field field : fields) {
+    System.out.println(field);
+}
+----------------------------------------------------------------------------------------
+
+Пример 4 - *.getField() - метод getField() возвращает только требуемую public переменную.
+                          Даже если поле с таким именем есть, но оно не public, метод
+                          *.getField() выбросит NoSuchFieldException
+----------------------------------------------------------------------------------------
+Class<Car> carClass = Car.class;
+try {
+    Field serialNumberField = carClass.getField("serialNumber");
+    System.out.println(serialNumberField);
+    Field horsepowerField = carClass.getField("horsepower");
+} catch (NoSuchFieldException e) {
+    e.printStackTrace();
+}
+----------------------------------------------------------------------------------------
+
+******* Получение информации о методах в классе с помощью Reflection *******
+
+Получить информацию о методах класса можно с помощью методов:
+- *.getDeclaredMethods();
+- *.getDeclaredMethod();
+- *.getMethods();
+- *.getMethod();
+- *.getEnclosingMethod().
+
+Пример 1 - *.getDeclaredMethods() - метод возвращает все объявленные методы в классе,
+                                    в том числе и private.
+----------------------------------------------------------------------------------------
+Class<Car> carClass = Car.class;
+Method[] declaredMethods = carClass.getDeclaredMethods();
+for (Method method : declaredMethods) {
+    System.out.println(method);
+}
+----------------------------------------------------------------------------------------
+
+Пример 2 - *.getDeclaredMethod() - метод getDeclaredMethod(String name, Class<?>... parameterTypes)
+                                   принимает имя и var-args с типами параметров метода. Если такого
+                                   метода в классе нет, мы получим NoSuchMethodException.
+----------------------------------------------------------------------------------------
+Class<Car> carClass = Car.class;
+try {
+    Method printSerialNumberMethod = carClass.getDeclaredMethod("printSerialNumber");
+    System.out.println(printSerialNumber);
+
+    Method setHorsepowerMethod = carClass.getDeclaredMethod("setHorsepower", int.class);
+    System.out.println(setHorsepower);
+
+    carClass.getDeclaredMethod("dodooooo");
+} catch (NoSuchMethodException e) {
+    e.printStackTrace();
+}
+----------------------------------------------------------------------------------------
+
+Пример 3 - *.getMethods() - метод возвращает все public методы класса и public методы его
+                            родительского класса/интерфейсов
+----------------------------------------------------------------------------------------
+Class<Car> carClass = Car.class;
+Method[] methods = carClass.getMethods();
+for (Method method : methods) {
+    System.out.println(method);
+}
+----------------------------------------------------------------------------------------
+
+Пример 4 - *.getMethod() - метод возвращает только публичные методы. Если такого метода нет
+                           или он не публичный, мы получим NoSuchMethodException.
+----------------------------------------------------------------------------------------
+Class<Car> carClass = Car.class;
+try {
+    Method getHorsepowerMethod = carClass.getMethod("notifyAll");
+    System.out.println(getHorsepowerMethod);
+
+    Method printSerialNumberMethod = carClass.getMethod("printSerialNumber");
+} catch (NoSuchMethodException e) {
+    e.printStackTrace();
+}
+----------------------------------------------------------------------------------------
+
+Пример 5 - *.getEnclosingMethod() - если класс является локальным или анонимным, метод
+                                    *.getEnclosingMethod() возвращает тот метод в котором
+                                    этот класс был создан, иначе метод возвращает null.
+----------------------------------------------------------------------------------------
+package com.lessons.reflection;
+
+class Main {
+    public static void anonymousClassExample() {
+        Car car = new Car() {
+            @Override
+            protected void printSerialNumber() {
+
+            }
+        };
+        Method enclosingMethod = car.getClass().getEnclosingMethod();
+        System.out.println(enclosingMethod);
+        /**
+        * Вывод на экран: public static void com.lessons.reflection.Main.anonymousClassExample()
+        **/
+    }
+}
+----------------------------------------------------------------------------------------
