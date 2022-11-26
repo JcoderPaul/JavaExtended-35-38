@@ -1,0 +1,163 @@
+******* Class Method - Класс Метод *******
+
+Пакет: java.lang.reflect
+Все реализованные интерфейсы:
+- AnnotatedElement - https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AnnotatedElement.html
+- GenericDeclaration - https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/GenericDeclaration.html
+- Member - https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Member.html
+
+Описание: public final class Method extends Executable
+
+Метод предоставляет информацию и доступ к одному методу в классе или
+интерфейсе. Отраженный метод может быть методом класса или методом
+экземпляра (включая абстрактный метод).
+
+Метод позволяет выполнять расширяющие преобразования при сопоставлении
+фактических параметров для вызова с формальными параметрами базового
+метода, но создает исключение IllegalArgumentException, если происходит
+сужающее преобразование.
+
+Связанные классы, интерфейсы, методы:
+- Member - https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Member.html
+Поля, унаследованные от интерфейса java.lang.reflect.Member: DECLARED, PUBLIC
+
+- Class - https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html
+Методы класса Class:
+- Class.getMethods();
+- Class.getMethod(String, Class[]);
+- Class.getDeclaredMethods();
+- Class.getDeclaredMethod(String, Class[]).
+(См. краткую русифицированную документацию - Less_37_ch_1_Reflection/ClassClasses.txt)
+
+******* МЕТОДЫ *******
+
+- boolean equals(Object obj) - Сравнивает этот метод с
+  указанным объектом.
+
+- AnnotatedType getAnnotatedReturnType() - Возвращает объект
+  AnnotatedType, представляющий использование типа для указания
+  возвращаемого типа метода/конструктора, представленного этим
+  исполняемым файлом.
+
+- <T extends Annotation> T getAnnotation(Class<T> annotationClass) -
+  Возвращает аннотацию этого элемента для указанного типа, если
+  такая аннотация присутствует, иначе null.
+
+- Annotation[] getDeclaredAnnotations() - Возвращает аннотации,
+  непосредственно присутствующие в этом элементе.
+
+- Class<?> getDeclaringClass() - Возвращает объект класса,
+  представляющий класс или интерфейс, который объявляет исполняемый
+  файл, представленный этим объектом.
+
+- Object getDefaultValue() - Возвращает значение по умолчанию для
+  члена аннотации, представленного этим экземпляром метода.
+
+- Class<?>[] getExceptionTypes() - Возвращает массив объектов Class,
+  представляющих типы исключений, объявленных для создания базовым
+  исполняемым файлом, представленным этим объектом.
+
+- Type[] getGenericExceptionTypes() - Возвращает массив объектов Type,
+  представляющих исключения, объявленные для создания этим исполняемым
+  объектом.
+
+- Type[] getGenericParameterTypes() - Возвращает массив объектов Type,
+  которые представляют типы формальных параметров в порядке объявления
+  исполняемого файла, представленного этим объектом.
+
+- Type getGenericReturnType() - Возвращает объект Type, представляющий
+  формальный возвращаемый тип метода, представленного этим объектом Method.
+
+- int getModifiers() - Возвращает модификаторы языка Java для исполняемого
+  файла, представленного этим объектом.
+
+- String getName() - Возвращает имя метода, представленного этим объектом
+  Method, в виде строки.
+
+- Annotation[][] getParameterAnnotations() - Возвращает массив массивов
+  аннотаций, которые представляют аннотации формальных параметров в порядке
+  объявления исполняемого файла, представленного этим объектом.
+
+- int getParameterCount() - Возвращает количество формальных параметров
+  (независимо от того, объявлены ли они явно или неявно, или ни то, ни
+  другое) для исполняемого файла, представленного этим объектом.
+
+- Class<?>[] getParameterTypes() - Возвращает массив объектов Class,
+  которые представляют типы формальных параметров в порядке объявления
+  исполняемого файла, представленного этим объектом.
+
+- Class<?> getReturnType() - Возвращает объект Class, представляющий
+  формальный возвращаемый тип метода, представленного этим объектом Method.
+
+- TypeVariable<Method>[] getTypeParameters() - Возвращает массив объектов
+  TypeVariable, которые представляют переменные типа, объявленные
+  универсальным объявлением, представленным этим объектом GenericDeclaration,
+  в порядке объявления.
+
+- int hashCode() - Возвращает хэш-код для этого метода.
+
+- Object invoke(Object obj, Object... args) - Вызывает базовый метод,
+  представленный этим объектом Method, для указанного объекта с
+  указанными параметрами.
+
+- boolean isBridge() - Возвращает true, если этот метод является
+  методом моста; в противном случае возвращает false.
+
+- boolean isDefault() - Возвращает true, если этот метод является
+  методом по умолчанию; в противном случае возвращает false.
+
+- boolean isSynthetic() - Возвращает true, если этот исполняемый
+  файл является синтетической конструкцией; в противном случае
+  возвращает false.
+
+- boolean isVarArgs() - Возвращает true, если этот исполняемый
+  файл был объявлен с переменным числом аргументов; в противном
+  случае возвращает false.
+
+- String toGenericString() - Возвращает строку, описывающую этот
+  метод, включая параметры типа.
+
+- String toString() - Возвращает строку, описывающую этот метод.
+
+Смотреть так же:
+
+*******************  Унаследованные методы *******************
+
+Методы, унаследованные от класса java.lang.reflect.Executable:
+getAnnotatedExceptionTypes,
+getAnnotatedParameterTypes,
+getAnnotatedReceiverType,
+getAnnotationsByType,
+getParameters
+См. док. - https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Executable.html
+
+Методы, унаследованные от класса java.lang.reflect.AccessibleObject:
+getAnnotations,
+getDeclaredAnnotation,
+getDeclaredAnnotationsByType,
+isAccessible,
+isAnnotationPresent,
+setAccessible,
+setAccessible
+См. док. - https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AccessibleObject.html
+
+Методы, унаследованные от класса java.lang.Object:
+clone,
+finalize,
+getClass,
+notify,
+notifyAll,
+wait,
+wait,
+wait
+См. док. - https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
+
+Методы, унаследованные от интерфейса java.lang.reflect.AnnotatedElement:
+getAnnotations,
+getDeclaredAnnotation,
+getDeclaredAnnotationsByType,
+isAnnotationPresent
+См. док. - https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/AnnotatedElement.html
+
+
+
