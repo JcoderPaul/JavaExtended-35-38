@@ -9,7 +9,7 @@
 - [Less_37_ch_1_Reflection](https://github.com/JcoderPaul/JavaExtended-35-38/tree/master/Less_37_ch_1_Reflection/src/Less_37_ch_1_Reflection)
 - [Less_37_ch_2_Reflection](https://github.com/JcoderPaul/JavaExtended-35-38/tree/master/Less_37_ch_2_Reflection/src/Less_37_ch_2_Reflection)
 - [Less_37_ch_3_ReflectionExample](https://github.com/JcoderPaul/JavaExtended-35-38/tree/master/Less_37_ch_3_ReflectionExample/src/Less_37_ReflectionExample) - рефлексия, примеры работы, описание методов. 
-
+- [Less_37_HW](https://github.com/JcoderPaul/JavaExtended-35-38/tree/master/Less_37_HW/src/Less_37_HW) - Развернутый пример работы с методами и классами Reflection API
 - [Less_38_ch_1_Annotation](https://github.com/JcoderPaul/JavaExtended-35-38/tree/master/Less_38_ch_1_Annotation/src/Less_38_ch_1_Annotation) - аннотации, краткое описание применения с примерами.
 
 Краткий перевод документации:
@@ -23,4 +23,6 @@
 - [Annotation](https://github.com/JcoderPaul/JavaExtended-35-38/blob/master/Less_38_ch_1_Annotation/src/Less_38_ch_1_Annotation/ReadMe.txt) - что такое аннотации;
 - [TypeAnnotations](https://github.com/JcoderPaul/JavaExtended-35-38/blob/master/Less_38_ch_1_Annotation/src/Less_38_ch_1_Annotation/TypeAnnotations.txt) - типы аннотаций, краткий перевод;
 - [RepeatingAnnotations](https://github.com/JcoderPaul/JavaExtended-35-38/blob/master/Less_38_ch_1_Annotation/src/Less_38_ch_1_Annotation/RepeatingAnnotations.txt) - повторяющиеся аннотации, краткий перевод;
+- [Class Method](https://github.com/JcoderPaul/JavaExtended-35-38/blob/master/Less_37_HW/src/Less_37_HW/ClassMethod.txt) - Данный класс предоставляет информацию и доступ к методам в классе или
+  интерфейсе.
 
